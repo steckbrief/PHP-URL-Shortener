@@ -5,16 +5,23 @@
  * Contact the author at http://briancray.com/
  */
 
+return [
 // db options
-define('DB_NAME', 'your db name');
-define('DB_USER', 'your db usernae');
-define('DB_PASSWORD', 'your db password');
-define('DB_HOST', 'localhost');
-define('DB_TABLE', 'shortenedurls');
+    'db_name' => 'your db name',
+    'db_user' => 'your db usernae',
+    'db_password' => 'your db password',
+    'db_host' => 'localhost',
+    'db_table' => 'shortenedurls',
+    // change to limit short url creation to a single IP
+    'limit_to_ip' => '',
+    // change to TRUE to start tracking referrals
+    'track' => FALSE,
+    // check if URL exists first
+    'check_url' => FALSE,
+    // do you want to cache?
+    'cache' => TRUE,
+];
 
-// connect to database
-mysql_connect(DB_HOST, DB_USER, DB_PASSWORD);
-mysql_select_db(DB_NAME);
 
 // base location of script (include trailing slash)
 define('BASE_HREF', 'http://' . $_SERVER['HTTP_HOST'] . '/');
@@ -36,3 +43,4 @@ define('CACHE', TRUE);
 
 // if so, where will the cache files be stored? (include trailing slash)
 define('CACHE_DIR', dirname(__FILE__) . '/cache/');
+?>
