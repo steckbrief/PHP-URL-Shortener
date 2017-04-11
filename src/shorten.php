@@ -1,7 +1,7 @@
 <?php
 
-require_once(__DIR__.'/common-functions.php');
-require_once(__DIR__.'/url-shorten-functions.php');
+require_once(__DIR__.'/lib/functions.common.inc.php');
+require_once(__DIR__.'/lib/functions.urlshorten.inc.php');
 
 // Check request method, only post is allowed
 $method = $_SERVER['REQUEST_METHOD'];

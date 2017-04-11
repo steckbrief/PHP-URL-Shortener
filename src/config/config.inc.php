@@ -15,9 +15,9 @@ return [
     // change to limit short url creation to a single IP
     'limit_to_ips' => '',
     // change to TRUE to start tracking referrals
-    'track' => FALSE,
+    'track' => TRUE,
     // check if URL exists first
-    'check_url' => FALSE,
+    'check_url' => TRUE,
     // do you want to cache?
     'cache' => TRUE,
 ];
