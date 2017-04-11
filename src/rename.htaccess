@@ -12,6 +12,6 @@ Options All -Indexes
 
 <IfModule mod_rewrite.c>
 RewriteEngine On
-RewriteRule ^shorten/(.*)$ shorten.php?longurl=$1 [L]
+RewriteRule ^shorten$ shorten.php [L]
 RewriteRule ^([0-9a-zA-Z]{1,6})$ redirect.php?url=$1 [L]
 </IfModule>

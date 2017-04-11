@@ -1,36 +1,34 @@
 <?php
-/*
- * First authored by Brian Cray
- * License: http://creativecommons.org/licenses/by/3.0/
- * Contact the author at http://briancray.com/
- */
-require_once("url-shorten-functions.php");
-$url_to_shorten = get_magic_quotes_gpc() ? stripslashes(trim($_REQUEST['longurl'])) : trim($_REQUEST['longurl']);
 
-if(!empty($url_to_shorten) && preg_match('|^https?://|', $url_to_shorten)) {
-	$config = require('config.php');
+require_once(__DIR__.'/common-functions.php');
+require_once(__DIR__.'/url-shorten-functions.php');
 
-	// check if the client IP is allowed to shorten
-	if ($_SERVER['REMOTE_ADDR'] != LIMIT_TO_IP) {
-		die('You are not allowed to shorten URLs with this service.');
-	}
+// Check request method, only post is allowed
+$method = $_SERVER['REQUEST_METHOD'];
+if ('POST' != $method) {
+  header('Location: index.php');
+}
+
+$urlToShorten = getMandatoryPostParameter('longurl');
+$baseUrl = getServerProtocol()."://".getRequestHostname();
+
+// Validate the url
+if (validateUrl($urlToShorten)) {
+  $config = require(__DIR__.'/config/config.inc.php');
+
+  // check if the client IP is allowed to shorten
+  if (is_array($config["limit_to_ips"]) && count($config["limit_to_ips"]) > 0 && !in_array($_SERVER['REMOTE_ADDR'], $config["limit_to_ips"])) {
+    sendHttpReturnCodeAndMessage(403, 'You are not allowed to shorten URLs with this service.');
+  }
+  // check if the URL is reachable
+  if (!$config["check_url"] || checkUrl($urlToShorten)) {
+    $slug = createSlugFromUrl($urlToShorten);
+    insertUrlAndSlug($urlToShorten, $slug, $config);
+  } else {
+    sendHttpReturnCodeAndMessage(400, "URL not valid");
+  }
 	
-	// check if the URL is valid
-	if ($config["check_url"]) {
-		$ch = curl_init();
-		curl_setopt($ch, CURLOPT_URL, $url_to_shorten);
-		curl_setopt($ch,  CURLOPT_RETURNTRANSFER, TRUE);
-		$response = curl_exec($ch);
-		$response_status = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-		curl_close($ch);
-		if ($response_status == '404') {
-			die('Not a valid URL');
-		}
-	}
-	
-	$shortened_url = insertURL($url_to_shorten, $config);
-
-	echo BASE_HREF . $shortened_url;
+  echo $baseUrl."/".$slug;
 }
 
 ?>
